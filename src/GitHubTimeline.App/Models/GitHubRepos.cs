@@ -2,5 +2,6 @@
 {
     public class GitHubRepos
     {
+        public string name { get; set; }
     }
 }

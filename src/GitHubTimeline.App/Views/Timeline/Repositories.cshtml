@@ -1,0 +1,21 @@
+﻿@model IEnumerable<GitHubTimeline.App.Models.GitHubRepos>
+
+@{
+    ViewData["Title"] = "Timeline";
+}
+
+<table class="table table-bordered">
+  <thead>
+  <tr>
+    <th scope="col">Name</th>
+  </tr>
+  </thead>
+  <tbody>
+  @foreach (var repo in @Model)
+  {
+    <tr>
+      <td>@repo.name</td>
+    </tr> 
+  }
+  </tbody>
+</table>

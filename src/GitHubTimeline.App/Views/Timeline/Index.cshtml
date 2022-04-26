@@ -1,4 +1,8 @@
-﻿<form method="post" asp-action="Generate">
+﻿@{
+    ViewData["Title"] = "Timeline";
+}
+
+<form method="post" asp-action="Generate">
   <div class="form-group">
     <input type="text" class="form-control" name="gitHubUserName" placeholder="Enter GitHub username">
   </div>

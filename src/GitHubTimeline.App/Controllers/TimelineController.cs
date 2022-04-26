@@ -20,8 +20,6 @@ namespace GitHubTimeline.App.Controllers
 
         public async Task<IActionResult> Generate(string gitHubUserName)
         {
-            Console.WriteLine(gitHubUserName);
-
             var httpClient = _httpClientFactory.CreateClient("GitHub");
 
             var httpResponseMessage = await httpClient.GetAsync($"users/{gitHubUserName}/repos");
@@ -35,7 +33,7 @@ namespace GitHubTimeline.App.Controllers
 
             var githubRepos = await JsonSerializer.DeserializeAsync<IEnumerable<GitHubRepos>>(contentStream);
 
-            throw new NotImplementedException();
+            return View("Repositories", githubRepos);
         }
     }
 }
