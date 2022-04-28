@@ -1,7 +1,13 @@
-﻿namespace GitHubTimeline.App.Models
+﻿using System.Text.Json.Serialization;
+
+namespace GitHubTimeline.App.Models
 {
     public class GitHubRepos
     {
-        public string name { get; set; }
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+
+        [JsonPropertyName("created_at")]
+        public DateTime CreatedAt { get; set; }
     }
 }

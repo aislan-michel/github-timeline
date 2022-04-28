@@ -4,18 +4,31 @@
     ViewData["Title"] = "Timeline";
 }
 
-<table class="table table-bordered">
-  <thead>
-  <tr>
-    <th scope="col">Name</th>
-  </tr>
-  </thead>
-  <tbody>
-  @foreach (var repo in @Model)
-  {
-    <tr>
-      <td>@repo.name</td>
-    </tr> 
-  }
-  </tbody>
-</table>
+<link href="@Url.Content("~/css/vertical-timeline.css")" rel="stylesheet" type="text/css" />
+
+<section class="intro">
+  <div class="container">
+    <h1>Vertical Timeline &darr;</h1>
+  </div>
+</section>
+
+<section class="timeline">
+  <ul>
+    @foreach (var repo in Model)
+    {
+      <li>
+        <div>
+          <time>@repo.CreatedAt</time> @repo.Name
+        </div>
+      </li>
+    }
+  </ul>
+</section>
+<footer class="page-footer">
+  <span>made by </span>
+  <a href="https://georgemartsoukos.com/" target="_blank">
+    <img width="24" height="24" src="https://assets.codepen.io/162656/george-martsoukos-small-logo.svg" alt="George Martsoukos logo">
+  </a>
+</footer>
+
+<script type="module" src="~/js/vertical-timeline.js" asp-append-version="true"></script>
