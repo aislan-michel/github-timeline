@@ -13,27 +13,47 @@ namespace GitHubTimeline.App.Controllers
             _httpClientFactory = httpClientFactory;
         }
 
-        public IActionResult Index()
+        [HttpGet]
+        public IActionResult Generate()
         {
-            return View();
+            return View(new Generate());
         }
 
-        public async Task<IActionResult> Generate(string gitHubUserName)
+        [HttpPost]
+        public async Task<IActionResult> Generate(Generate command)
         {
             var httpClient = _httpClientFactory.CreateClient("GitHub");
-
-            var httpResponseMessage = await httpClient.GetAsync($"users/{gitHubUserName}/repos");
-
-            if (!httpResponseMessage.IsSuccessStatusCode)
+            
+            if (!await UserNameExists(command.GitHubUserName))
             { 
-                return BadRequest();
-            }
+                ModelState.AddModelError("GitHubUserName", "not found");
 
-            using var contentStream = await httpResponseMessage.Content.ReadAsStreamAsync();
+                return View(command);
+            }
+            
+            var httpResponseMessage = await httpClient.GetAsync($"users/{command.GitHubUserName}/repos");
+
+            await using var contentStream = await httpResponseMessage.Content.ReadAsStreamAsync();
 
             var githubRepos = await JsonSerializer.DeserializeAsync<IEnumerable<GitHubRepos>>(contentStream);
 
             return View("Repositories", githubRepos);
+        }
+
+        private async Task<bool> UserNameExists(string gitHubUserName)
+        {
+            Console.WriteLine(gitHubUserName);
+            
+            var httpClient = _httpClientFactory.CreateClient("GitHub");
+            
+            var httpResponseMessage = await httpClient.GetAsync($"users/{gitHubUserName}");
+            
+            if (!httpResponseMessage.IsSuccessStatusCode)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

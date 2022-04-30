@@ -1,0 +1,14 @@
+﻿@model GitHubTimeline.App.Models.Generate
+
+@{
+    ViewData["Title"] = "Timeline";
+}
+
+<form method="post" asp-action="Generate">
+    <div class="form-group">
+        @Html.TextBoxFor(x => x.GitHubUserName, "", new { @class = "form-control", @name = "gitHubUserName", @placeholder = "Enter GitHub username" })
+        @Html.ValidationMessageFor(x => x.GitHubUserName, "dsf", new { @class = "invalid-feedback" })
+    </div>
+
+  <button type="submit" class="btn btn-primary mt-3">Generate</button>
+</form>
