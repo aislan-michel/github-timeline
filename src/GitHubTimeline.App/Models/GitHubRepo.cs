@@ -2,7 +2,7 @@
 
 namespace GitHubTimeline.App.Models
 {
-    public class GitHubRepos
+    public class GitHubRepo
     {
         [JsonPropertyName("name")] 
         public string? Name { get; set; }

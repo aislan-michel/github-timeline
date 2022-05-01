@@ -1,0 +1,11 @@
+﻿@model IEnumerable<GitHubTimeline.App.Models.Summary>
+
+@{
+    ViewData["Title"] = "Summary";
+}
+
+@foreach(var item in Model)
+{
+    <p>@item.CreatedYear</p><br />
+    <p>@item.NumberOfGitHubReposTallied</p> <br /><br />
+}
