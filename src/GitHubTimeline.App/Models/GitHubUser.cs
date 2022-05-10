@@ -13,10 +13,10 @@ public class GitHubUser
     }
 
     public string GitHubUserName { get; set; } = string.Empty;
-    public List<GitHubRepo> Repositories { get; set; } = new List<GitHubRepo>();
+    public List<GitHubRepo> Repositories { get; set; } = new();
 
     public int GetNumberOfGitHubReposTallied(int createdYear)
     {
-        return Repositories.Where(y => y.CreatedAt.Year == createdYear).Count();
+        return Repositories.Count(x => x.CreatedAt.Year == createdYear);
     }
 }

@@ -13,7 +13,7 @@
             CreatedYear = createdYear;
         }
 
-        public int NumberOfGitHubReposTallied { get; set; }
+        public int NumberOfGitHubReposTallied { get; set; } 
         public int CreatedYear { get; set; }
     }
 }

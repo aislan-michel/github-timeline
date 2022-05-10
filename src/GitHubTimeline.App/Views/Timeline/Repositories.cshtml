@@ -1,4 +1,4 @@
-﻿@model IEnumerable<GitHubTimeline.App.Models.GitHubRepo>
+﻿@model GitHubTimeline.App.Models.GitHubUser
 
 @{
     ViewData["Title"] = "Timeline";
@@ -10,13 +10,13 @@
     <div class="container">
         <h1>Vertical Timeline &darr;</h1>
 
-        <p>aislanmi</p>
+        <p>@Model.GitHubUserName</p>
     </div>
 </section>
 
 <section class="timeline">
     <ul>
-        @foreach (var repo in Model)
+        @foreach (var repo in Model.Repositories)
         {
             <li>
                 <div>
@@ -26,11 +26,12 @@
         }
         <li>
             <div>
-                <a asp-action="Summary">summary</a>
+                <a href="@Url.Action("Summary", "Timeline", new { gitHubUserName = Model.GitHubUserName })">summary</a>
             </div>
         </li>
     </ul>
 </section>
+
 <footer class="page-footer">
     <span>made by </span>
     <a href="https://georgemartsoukos.com/" target="_blank">

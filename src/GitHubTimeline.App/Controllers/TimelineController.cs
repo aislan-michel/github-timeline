@@ -8,7 +8,7 @@ namespace GitHubTimeline.App.Controllers
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger<TimelineController> _logger;
-        private static IList<GitHubUser> _cache = new List<GitHubUser>();
+        private static readonly IList<GitHubUser> Cache = new List<GitHubUser>();
 
         public TimelineController(IHttpClientFactory httpClientFactory, ILogger<TimelineController> logger)
         {
@@ -23,24 +23,24 @@ namespace GitHubTimeline.App.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Generate(GitHubUser model)
+        public async Task<IActionResult> Generate(GitHubUser gitHubUser)
         {
             try
             {
-                if (!await UserNameExists(model.GitHubUserName))
+                if (!await UserNameExists(gitHubUser.GitHubUserName))
                 {
                     ModelState.AddModelError("GitHubUserName", "not found");
 
-                    return View(model);
+                    return View(gitHubUser);
                 }
 
-                var gitHubRepos = await GetGitHubRepos(model.GitHubUserName);
+                var gitHubRepos = await GetGitHubRepos(gitHubUser.GitHubUserName);
 
-                model.Repositories.AddRange(gitHubRepos);
+                gitHubUser.Repositories.AddRange(gitHubRepos.OrderByDescending(x => x.CreatedAt));
 
-                _cache.Add(model);
+                Cache.Add(gitHubUser);
 
-                return View("Repositories", gitHubRepos?.OrderByDescending(x => x.CreatedAt));
+                return View("Repositories", gitHubUser);
             }
             catch (Exception e)
             {
@@ -57,7 +57,14 @@ namespace GitHubTimeline.App.Controllers
 
             await using var contentStream = await httpResponseMessage.Content.ReadAsStreamAsync();
 
-            return await JsonSerializer.DeserializeAsync<IEnumerable<GitHubRepo>>(contentStream);
+            var json = await JsonSerializer.DeserializeAsync<IEnumerable<GitHubRepo>>(contentStream);
+
+            if (json == null)
+            {
+                throw new NullReferenceException(nameof(json));
+            }
+
+            return json;
         }
 
         private async Task<bool> UserNameExists(string gitHubUserName)
@@ -66,17 +73,12 @@ namespace GitHubTimeline.App.Controllers
             
             var httpResponseMessage = await httpClient.GetAsync($"users/{gitHubUserName}");
             
-            if (!httpResponseMessage.IsSuccessStatusCode)
-            {
-                return false;
-            }
-
-            return true;
+            return httpResponseMessage.IsSuccessStatusCode;
         }
 
         public IActionResult Summary(string gitHubUserName)
         {
-            var model = _cache.FirstOrDefault(x => x.GitHubUserName == gitHubUserName);
+            var model = Cache.FirstOrDefault(x => x.GitHubUserName == gitHubUserName);
 
             var summary = model?.Repositories
                 .Select(repo =>
@@ -85,7 +87,7 @@ namespace GitHubTimeline.App.Controllers
                     var numberOfGitHubReposTallied = model.GetNumberOfGitHubReposTallied(createdYear);
 
                     return new Summary(createdYear, numberOfGitHubReposTallied);
-                });
+                }).Distinct();
 
             return View(summary);
         }
